@@ -1,6 +1,5 @@
 import { toast } from "react-hot-toast";
-
-const API_URL = "http://localhost:5000";
+import { API_URL, getAuthHeaders } from "../lib/api";
 
 function getToneClasses(tone) {
   switch (tone) {
@@ -26,6 +25,7 @@ export default function ProductList({
     try {
       const res = await fetch(`${API_URL}/products/${id}`, {
         method: "DELETE",
+        headers: getAuthHeaders(),
       });
 
       if (!res.ok) {
@@ -117,9 +117,7 @@ export default function ProductList({
                   <button
                     onClick={() => {
                       setEditingProduct(product);
-                      toast("Loaded product into editor.", {
-                        icon: "📝",
-                      });
+                      toast("Loaded product into editor.", { icon: "📝" });
                     }}
                     className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white transition hover:bg-white/10"
                   >

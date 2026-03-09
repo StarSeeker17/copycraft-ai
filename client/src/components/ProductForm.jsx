@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-
-const API_URL = "http://localhost:5000";
+import { API_URL, getAuthHeaders } from "../lib/api";
 
 const initialForm = {
   name: "",
@@ -43,9 +42,7 @@ export default function ProductForm({
     try {
       const res = await fetch(`${API_URL}/generate`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify({
           name: form.name,
           category: form.category,
@@ -81,9 +78,7 @@ export default function ProductForm({
     try {
       const res = await fetch(url, {
         method,
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(form),
       });
 
@@ -232,9 +227,7 @@ export default function ProductForm({
               onClick={() => {
                 setEditingProduct(null);
                 setForm(initialForm);
-                toast("Edit cancelled.", {
-                  icon: "✏️",
-                });
+                toast("Edit cancelled.", { icon: "✏️" });
               }}
               className="rounded-2xl border border-white/15 bg-white/5 px-5 py-3 font-medium text-white transition hover:bg-white/10"
             >

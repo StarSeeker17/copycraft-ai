@@ -1,245 +1,93 @@
 # CopyCraft AI
 
-CopyCraft AI is a simple full-stack web application that helps users generate and manage ecommerce product descriptions using AI.
-The app allows users to create products, generate AI-powered descriptions, store them in a database, and edit or delete them later.
+## What the App Does
 
-This project was built as part of the **“Vibe to Product” challenge**, demonstrating the ability to rapidly build a functional product using modern tools and AI-assisted development.
+CopyCraft AI is a full-stack web application that helps users generate and manage ecommerce product descriptions using AI.
 
----
+Users can:
 
-# Features
+* Register and log in
+* Create products with details such as name, category, features, and tone
+* Generate AI-written product descriptions
+* Save descriptions to a database
+* Edit or delete their products later
 
-* Create new product entries
-* Generate AI product descriptions
-* Store products in a database
-* Edit existing products
-* Delete products
-* Responsive React interface
-* AI text generation powered by the **Google Gemini API**
+Each user only sees and manages their own products.
 
 ---
 
-# Tech Stack
+## LLMs and Tools Used
 
-Frontend
+**AI / LLM**
+
+* Google Gemini API (Gemini Flash model)
+
+**Frontend**
 
 * React
 * Vite
 * Tailwind CSS
+* React Hot Toast
 
-Backend
+**Backend**
 
 * Node.js
-* Express.js
+* Express
 
-Database
+**Database**
 
 * Prisma ORM
 * SQLite
 
-AI Integration
+**Auth**
 
-* Google Gemini API
-
----
-
-# Project Architecture
-
-The application follows a simple full-stack architecture:
-
-React Frontend
-⬇
-Express API Server
-⬇
-Prisma ORM
-⬇
-SQLite Database
-
-The AI generation request flows through the backend server which communicates with the Gemini API.
+* JWT (jsonwebtoken)
+* bcryptjs for password hashing
 
 ---
 
-# Project Structure
+Initially, the application was implemented using the **OpenAI API** for generating product descriptions.
+However, the integration failed during testing because the account had **no available API quota**, causing the backend to return an `insufficient_quota` error whenever the description generation endpoint was called.
+
+The solution was to switch the AI provider to **Google Gemini**.
+
+Using AI assistance during development, I prompted for:
+
+* a migration strategy from OpenAI to Gemini
+* a minimal code change approach
+* updated API calls compatible with the Gemini SDK
+
+The result was replacing the OpenAI client with the **@google/genai SDK** and updating the generation route to use:
 
 ```
-copycraft-ai/
-│
-├── client/                 # React frontend
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── ProductForm.jsx
-│   │   │   └── ProductList.jsx
-│   │   ├── App.jsx
-│   │   └── main.jsx
-│   └── package.json
-│
-├── server/                 # Express backend
-│   ├── prisma/
-│   │   └── schema.prisma
-│   ├── index.js
-│   ├── .env
-│   └── package.json
-│
-└── README.md
+ai.models.generateContent()
 ```
+
+This allowed the application to keep the same architecture while restoring AI functionality using Gemini’s free developer tier.
 
 ---
 
-# Setup Instructions
+## Running the Project
 
-## 1. Clone the repository
-
-```
-git clone https://github.com/yourusername/copycraft-ai.git
-cd copycraft-ai
-```
-
----
-
-# Backend Setup
-
-Navigate to the server folder:
+Backend:
 
 ```
 cd server
-```
-
-Install dependencies:
-
-```
 npm install
-```
-
-Create a `.env` file:
-
-```
-DATABASE_URL="file:./dev.db"
-GEMINI_API_KEY="your_api_key_here"
-```
-
-Run database migration:
-
-```
-npx prisma migrate dev --name init
-```
-
-Start the backend server:
-
-```
+npx prisma migrate dev
 npm run dev
 ```
 
-The backend should now be running on:
-
-```
-http://localhost:5000
-```
-
----
-
-# Frontend Setup
-
-Open a new terminal and navigate to the client folder:
+Frontend:
 
 ```
 cd client
-```
-
-Install dependencies:
-
-```
 npm install
-```
-
-Start the React development server:
-
-```
 npm run dev
 ```
 
-The frontend should now be available at:
+Open the app at:
 
 ```
 http://localhost:5173
 ```
-
----
-
-# How to Use the App
-
-1. Open the application in your browser.
-2. Enter product details such as:
-
-   * product name
-   * category
-   * features
-   * tone
-3. Click **Generate Description**.
-4. The AI will generate a product description.
-5. Click **Save Product** to store it in the database.
-6. Use the product list to:
-
-   * edit entries
-   * delete entries
-   * review generated descriptions.
-
----
-
-# AI Generation
-
-Product descriptions are generated using the **Google Gemini API**.
-
-The backend sends product details to the Gemini model, which returns a concise marketing description tailored to the chosen tone.
-
-Example prompt used:
-
-```
-Write a compelling ecommerce product description.
-
-Product name: {name}
-Category: {category}
-Features: {features}
-Tone: {tone}
-
-Requirements:
-- Keep it under 120 words
-- Focus on benefits
-- Return only the description
-```
-
----
-
-# CRUD Functionality
-
-The application supports full database CRUD operations:
-
-Create
-Create a new product entry.
-
-Read
-Retrieve stored products from the database.
-
-Update
-Edit product details and descriptions.
-
-Delete
-Remove products from the database.
-
----
-
-# Future Improvements
-
-Possible improvements include:
-
-* authentication and user accounts
-* product search and filtering
-* regenerate AI descriptions
-* copy-to-clipboard functionality
-* richer prompt customization
-* deployment to cloud infrastructure
-
----
-
-# License
-
-This project is intended for educational and demonstration purposes.
