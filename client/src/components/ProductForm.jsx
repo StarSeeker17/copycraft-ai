@@ -31,7 +31,7 @@ export default function ProductForm({
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleGenerate = async () => {
+  const generateDescription = async ({ isRegeneration = false } = {}) => {
     if (!form.name || !form.category || !form.features) {
       toast.error("Please fill in name, category, and features first.");
       return;
@@ -57,7 +57,12 @@ export default function ProductForm({
 
       const data = await res.json();
       setForm((prev) => ({ ...prev, description: data.description || "" }));
-      toast.success("Description generated successfully.");
+
+      toast.success(
+        isRegeneration
+          ? "Description regenerated successfully."
+          : "Description generated successfully."
+      );
     } catch (error) {
       console.error(error);
       toast.error("Failed to generate description.");
@@ -101,6 +106,12 @@ export default function ProductForm({
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleClear = () => {
+    setEditingProduct(null);
+    setForm(initialForm);
+    toast("Form cleared.", { icon: "🧹" });
   };
 
   return (
@@ -180,7 +191,7 @@ export default function ProductForm({
         </div>
 
         <div className="rounded-2xl border border-violet-400/20 bg-violet-500/10 p-4">
-          <div className="mb-3 flex items-center justify-between">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
             <div>
               <h3 className="font-medium text-white">AI Description</h3>
               <p className="text-sm text-slate-300">
@@ -188,14 +199,25 @@ export default function ProductForm({
               </p>
             </div>
 
-            <button
-              type="button"
-              onClick={handleGenerate}
-              disabled={loading}
-              className="rounded-xl bg-gradient-to-r from-violet-500 to-fuchsia-500 px-4 py-2 text-sm font-medium text-white shadow-lg transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {loading ? "Generating..." : "Generate"}
-            </button>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => generateDescription()}
+                disabled={loading}
+                className="rounded-xl bg-gradient-to-r from-violet-500 to-fuchsia-500 px-4 py-2 text-sm font-medium text-white shadow-lg transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {loading ? "Generating..." : "Generate"}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => generateDescription({ isRegeneration: true })}
+                disabled={loading || !form.description}
+                className="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Regenerate
+              </button>
+            </div>
           </div>
 
           <textarea
@@ -219,6 +241,14 @@ export default function ProductForm({
               : editingProduct
               ? "Update Product"
               : "Save Product"}
+          </button>
+
+          <button
+            type="button"
+            onClick={handleClear}
+            className="rounded-2xl border border-white/15 bg-white/5 px-5 py-3 font-medium text-white transition hover:bg-white/10"
+          >
+            Clear
           </button>
 
           {editingProduct && (
